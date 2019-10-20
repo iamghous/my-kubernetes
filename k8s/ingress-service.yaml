@@ -1,0 +1,31 @@
+# we will use this version for ingress configuration
+apiVersion: extensions/v1beta1
+# we will use ingress object
+kind: Ingress
+metadata:
+  # assiging name to this object
+  name: ingress-service
+  # to setup ingress we will need to use extra configuration using annotations
+  annotations:
+    # telling kuberentes that we want nginx controller based on nginx project
+    kubernetes.io/ingress.class: nginx
+    # it is gonna configure how exactly our copy of nginx behaves
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  
+spec:
+  rules:
+    - http:
+        paths:
+          # we are gonna set routings here
+          # if anythign comes here apart from "/api" it will go here
+          # and use client service
+          - path: /?(.*)
+            backend:
+              serviceName: client-cluster-ip-service
+              servicePort: 3000
+            #  this will say we will use server service, if the url is has "/api" 
+            # and anything after /api/anything will come here
+          - path: /api/?(.*)
+            backend:
+              serviceName: server-cluster-ip-service
+              servicePort: 5000

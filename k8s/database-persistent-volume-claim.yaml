@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: database-persistent-volume-claim
+spec:
+  # its gonna ask kubernetes to provide an instance#
+  # where it can store data
+  # and also make sure it only allwos one node at a time
+  # to read and write to it
+  accessModes:
+   - ReadWriteOnce
+   # then we are saying provide us 1Gi of storage place
+  resources:
+    requests:
+      storage: 1Gi
