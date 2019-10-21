@@ -1,0 +1,26 @@
+# so we are gonna tell travis to use sudo because we will be 
+# needing to use docker
+sudo: required
+# we say we require docker service to be pre installed, as soon as
+# we try to run our build
+services:
+  - docker
+# we will use this flag to do certain tasks before running tests
+# or deploy our application
+before_install:
+  - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
+  # this command will download the google cloud sdk and install
+  # it inside the folder on right side of the command which is a
+  # temporary place/instance assigned to us by travis
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  # this is basically saying there is file path.bash.inc whcih will
+  # modify your shell and is needed for running google Commands
+  # , these two commands will set google sdk CLI for you
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  # this is going to install and update kubectl inside our travis enviornment
+  - gcloud components update kubectl
+  # now we gonna tell google cloud who we are and what access we have
+  # we will provide a file to google sdk CLI which is service-account,json
+  # this file will have our credentials and will authorise us to google account
+  # 'activate-service-account' is similar to 'IAM' in AWS.
+  - gcloud auth activate-service-account --key-file service-account.json
