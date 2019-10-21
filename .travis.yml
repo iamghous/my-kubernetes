@@ -43,7 +43,7 @@ before_install:
   # now we are going to tell which zone we are using in our application
   - gcloud config set compute/zone europe-west2-c
   # now we are going to provide the k8s cluster name which we are gonna work on
-  - gcloud container clusters get-credentials mulit-cluster
+  - gcloud container clusters get-credentials mulit-cluster --zone=europe-west2-c
   # now we are gonna login to docker using singl line command
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # now we are gonna build Dockerfile.dev image to run some tests so
