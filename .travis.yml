@@ -5,9 +5,23 @@ sudo: required
 # we try to run our build
 services:
   - docker
+# we will set some environment variables here
+env:
+  # we will add some env variables in global object
+  global:
+  # here we are saying run the command inside brackets and whatever comes out pass it to SHA
+  # it will pass the current git sha to this SHA variable
+    - SHA=$(git rev-parse HEAD)
+  # this is just saying if gloud CLI has some promopts when we use it, then dont allow those prompts.
+  # because inside travis environment we will not have access to it
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 # we will use this flag to do certain tasks before running tests
 # or deploy our application
 before_install:
+  # this line has been generated when i passed service-account.json file
+  # from travis CLI locally to my travis account,
+  # this line will decrypt the file and then paste it in our temporary root directory here on travis
+  # so we can access it on the 5th command of before_install object.
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
   # this command will download the google cloud sdk and install
   # it inside the folder on right side of the command which is a
@@ -24,3 +38,32 @@ before_install:
   # this file will have our credentials and will authorise us to google account
   # 'activate-service-account' is similar to 'IAM' in AWS.
   - gcloud auth activate-service-account --key-file service-account.json
+  # now we need to tell gloud, which project are we going to use, so i will add my project id
+  - gcloud config set project my-kubernetes-256516
+  # now we are going to tell which zone we are using in our application
+  - gcloud config set compute/zone europe-west2-c
+  # now we are going to provide the k8s cluster name which we are gonna work on
+  - gcloud container clusters get-credentials mulit-cluster
+  # now we are gonna login to docker using singl line command
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  # now we are gonna build Dockerfile.dev image to run some tests so
+  # so we will build docker image from client folder, we will also tag the image
+  - docker build -t iamnoman07/react-test -f ./client/Dockerfile.dev ./client
+
+# now we will run some scripts
+script:
+  # we will now run that image we built earlier
+  - docker run -e CI=true iamnoman07/react-test npm run test
+
+# now we wont add any deploy configuration in this section rather
+# we will tell yaml to use another file to deploy
+deploy:
+  # rather than saying provider, such as elastic bean, we will say use
+  # object script, which is actually the one below this object
+  provider: script
+  # we will provide this file
+  script: bash ./deploy.sh
+  # and finally we only want this to be deployed on if there is a
+  # change in the master branch
+  on:
+    branch: master
