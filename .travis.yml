@@ -17,6 +17,7 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 # we will use this flag to do certain tasks before running tests
 # or deploy our application
+    - CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE=True
 before_install:
   # this line has been generated when i passed service-account.json file
   # from travis CLI locally to my travis account,
