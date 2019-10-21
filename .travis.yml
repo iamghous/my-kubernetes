@@ -17,7 +17,7 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 # we will use this flag to do certain tasks before running tests
 # or deploy our application
-    - CLOUDSDK_CONTAINER_USE_CLIENT_CERTIFICATE=True
+    - CLOUDSDK_COMPUTE_ZONE=europe-west2-c
 before_install:
   # this line has been generated when i passed service-account.json file
   # from travis CLI locally to my travis account,
@@ -44,7 +44,7 @@ before_install:
   # now we are going to tell which zone we are using in our application
   - gcloud config set compute/zone europe-west2-c
   # now we are going to provide the k8s cluster name which we are gonna work on
-  - gcloud container clusters get-credentials mulit-cluster --zone=europe-west2-c
+  - gcloud container clusters get-credentials mulit-cluster
   # now we are gonna login to docker using singl line command
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # now we are gonna build Dockerfile.dev image to run some tests so
