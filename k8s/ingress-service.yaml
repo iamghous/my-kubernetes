@@ -11,8 +11,22 @@ metadata:
     kubernetes.io/ingress.class: nginx
     # it is gonna configure how exactly our copy of nginx behaves
     nginx.ingress.kubernetes.io/rewrite-target: /$1
+    # this is telling ingress that we will be using this issuer for our certificate
+    # this is basically the name of object that we created from issuer.yaml
+   # certmanager.k8s.io/cluster-issuer: 'letsencrypt-prod'
+    # this will tell ingress to always force users to use https requests
+  #  nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+
+
   
 spec:
+  # this is gonna tell nginx we want https to be serviced on these two domains
+ # tls:
+  #  - hosts:
+   #     - yourDomain.com
+    #    - www.yourDomain.com
+      # this is the name of the secret that was generate from certifcate.yaml and issuer.yaml files
+     # secretName: yourDomainName-com
   rules:
     - http:
         paths:
@@ -29,3 +43,39 @@ spec:
             backend:
               serviceName: server-cluster-ip-service
               servicePort: 5000
+
+
+ # rules:
+  #  - http: yourDOmain.com
+   #     paths:
+          # we are gonna set routings here
+          # if anythign comes here apart from "/api" it will go here
+          # and use client service
+    #      - path: /?(.*)
+       #     backend:
+     #         serviceName: client-cluster-ip-service
+      #        servicePort: 3000
+            #  this will say we will use server service, if the url is has "/api" 
+            # and anything after /api/anything will come here
+        #  - path: /api/?(.*)
+         #   backend:
+          #    serviceName: server-cluster-ip-service
+           #   servicePort: 5000
+
+ # rules:
+  #  - host: www.yourDOmain.com
+   #   http:
+    #    paths:
+          # we are gonna set routings here
+          # if anythign comes here apart from "/api" it will go here
+          # and use client service
+     #     - path: /?(.*)
+      #      backend:
+       #       serviceName: client-cluster-ip-service
+        #      servicePort: 3000
+            #  this will say we will use server service, if the url is has "/api" 
+            # and anything after /api/anything will come here
+         # - path: /api/?(.*)
+          #  backend:
+           #   serviceName: server-cluster-ip-service
+            #  servicePort: 5000

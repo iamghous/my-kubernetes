@@ -1,0 +1,33 @@
+# Since we are using certmanager to install https
+# we will use its bucket for the objects, just like Issuer.yaml
+apiVersion: certmanager.k8s.io/v1alpha1
+# we will set the object type of Certificate
+kind: Certificate
+metadata:
+  # provide the name of this object
+  name: anYNameReallyTBH
+spec:
+  # this name will be assigned to the certificate that will be
+  # create after deploying this file and issuer file to k8s
+  secretName: yourdomainName-com
+  # here you need to provide reference to your issuer object
+  issuerRef:
+    # provide name of issuer.yaml object 
+    name: letsencrypt-prod
+    # provide kind of the issuer.yaml object
+    kind: ClusterIssuer
+  # this is the interesing bit, this name will be issued on the
+  # certifcate, saying the certifcate has been issued to this domain
+  commonName: yourdomainName.com
+  # these are the web address names that the certificate will cover
+  dnsNames:
+    - yourDomainName.com
+    - www.yourDomainName.com
+  # few more additional things that are just needed to be added for some reasons  
+  acme:
+    config:
+      - http01:
+          ingressClass: nginx
+        domains:
+          - yourDomainName.com
+          - www.YourDomainName.com

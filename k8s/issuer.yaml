@@ -1,0 +1,22 @@
+# api version is essentially specifiying a bucket of 
+# different objects type which we can pull from
+apiVersion: certmanager.k8s.io/v1alpha1
+# we will create a Cluster Issuer type object
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+
+spec:
+  acme:
+    #we will then specify the server cert manager should reach
+    #out to when it tries to establish this verfication process
+    server: https://acme-v-2.api.letsencrypt.org/directory
+    # this is optional, it doesnt matter if you dont provide email
+    email: nomanghous@live.co.uk
+    # this is another object that we need to create to 
+    # setup this thing
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    # this will respond to the request of letsencrypt when it
+    # test our domain
+    http01: {}
